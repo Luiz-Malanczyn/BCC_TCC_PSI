@@ -21,7 +21,6 @@ public class PSI extends AbstractChangeDetector {
 
     private static final long serialVersionUID = -3518369648142099719L;
 
-    //private static final int DDM_MINNUMINST = 30;
     public IntOption minNumInstancesOption = new IntOption(
             "minNumInstances",
             'n',
@@ -168,13 +167,4 @@ public class PSI extends AbstractChangeDetector {
         return percentages;
 
     }
-
-    public static Double findSumWithoutUsingStream(ArrayList<Double> array) {
-        Double sum = 0.0;
-        for (Double value : array) {
-            sum += value;
-        }
-        return sum;
-    }
-
 }
