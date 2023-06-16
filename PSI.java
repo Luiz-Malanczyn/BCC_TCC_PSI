@@ -3,6 +3,7 @@ package moa.classifiers.core.driftdetection;
 import com.github.javacliparser.FloatOption;
 import com.github.javacliparser.IntOption;
 import com.google.common.collect.Lists;
+import gnu.trove.impl.sync.TSynchronizedShortObjectMap;
 import moa.core.ObjectRepository;
 import moa.tasks.TaskMonitor;
 
@@ -21,25 +22,34 @@ public class PSI extends AbstractChangeDetector {
 
     private static final long serialVersionUID = -3518369648142099719L;
 
+    //private static final int DDM_MINNUMINST = 30;
     public IntOption minNumInstancesOption = new IntOption(
             "minNumInstances",
             'n',
             "The minimum number of instances before permitting detecting change.",
-            30, 0, Integer.MAX_VALUE);
+            100, 0, Integer.MAX_VALUE);
 
     public FloatOption warningLevelOption = new FloatOption(
             "warningLevel", 'w', "Warning Level.",
-            2.0, 1.0, 4.0);
+            0.1, 0.0, 1.0);
 
     public FloatOption outcontrolLevelOption = new FloatOption(
             "outcontrolLevel", 'o', "Outcontrol Level.",
-            3.0, 1.0, 5.0);
+            0.2, 0.0, 1.0);
 
     public IntOption tamanhoJanelaOption = new IntOption(
             "tamanhoJanela",
             't',
             "The minimum number of instances before permitting detecting change.",
             100, 0, Integer.MAX_VALUE);
+
+    public IntOption tamanhoBinOption = new IntOption(
+            "tamanhoBin",
+            'b',
+            "The number of bins to split the window.",
+            10, 1, 100);
+
+    private int numInstances = 1;
 
     private int minNumInstances;
 
@@ -48,6 +58,8 @@ public class PSI extends AbstractChangeDetector {
     private double outcontrolLevel;
 
     private int tamanhoJanela;
+
+    private int tamanhoBin;
 
     private Double psi;
 
@@ -62,10 +74,14 @@ public class PSI extends AbstractChangeDetector {
     @Override
     public void resetLearning() {
         psi = 0.0;
+        numInstances = 1;
+        actualPrediction.clear();
+        expectedPrediction.clear();
         minNumInstances = this.minNumInstancesOption.getValue();
         warningLevel = this.warningLevelOption.getValue();
         outcontrolLevel = this.outcontrolLevelOption.getValue();
         tamanhoJanela = this.tamanhoJanelaOption.getValue();
+        tamanhoBean = this.tamanhoBeanOption.getValue();
     }
 
     @Override
@@ -77,10 +93,12 @@ public class PSI extends AbstractChangeDetector {
             this.isInitialized = true;
         }
 
+        numInstances++;
+
         this.isChangeDetected = false;
         this.isWarningZone = false;
 
-        while (actualPrediction.size() < tamanhoJanela - 1) {
+        if (actualPrediction.size() < tamanhoJanela - 1) {
             actualPrediction.add(prediction);
             return;
         }
@@ -92,11 +110,16 @@ public class PSI extends AbstractChangeDetector {
             return;
         }
 
+        if (numInstances < minNumInstances) {
+            return;
+        }
+
         ArrayList<Double> expectedPercentages = getPercentages(expectedPrediction);
         ArrayList<Double> actualPercentages = getPercentages(actualPrediction);
 
-        System.out.println(getPercentages(expectedPrediction));
-        System.out.println(getPercentages(actualPrediction));
+        //System.out.println(getPercentages(expectedPrediction));
+        //System.out.println(getPercentages(actualPrediction));
+
 
         psi = 0.0;
 
@@ -110,21 +133,24 @@ public class PSI extends AbstractChangeDetector {
             }
         }
 
-        System.out.println(psi);
-
-        expectedPrediction.clear();
-        expectedPrediction.addAll(actualPrediction);
-        actualPrediction.clear();
-
-        if (psi >=0.2) {
+        if (psi >= outcontrolLevel) {
             this.isChangeDetected = true;
-        } else if (psi >=0.1) {
+            //System.out.println(numInstances);
+            //System.out.println(psi);
+        } else if (psi >= warningLevel) {
             this.isWarningZone = true;
+            //System.out.println(numInstances);
+            //System.out.println(psi);
         } else {
             this.isWarningZone = false;
         }
 
-        System.out.println(isChangeDetected);
+        //System.out.println(psi);
+
+        expectedPrediction.remove(0);
+        expectedPrediction.add(actualPrediction.get(0));
+        actualPrediction.remove(0);
+
     }
 
     @Override
@@ -134,13 +160,13 @@ public class PSI extends AbstractChangeDetector {
 
     @Override
     protected void prepareForUseImpl(TaskMonitor monitor,
-            ObjectRepository repository) {
+                                     ObjectRepository repository) {
         // TODO Auto-generated method stub
     }
 
-    private static ArrayList<Double> getPercentages(ArrayList<Double> values) {
+    private ArrayList<Double> getPercentages(ArrayList<Double> values) {
         ArrayList<Double> percentages = new ArrayList<>();
-        List<List<Double>> partition = Lists.partition(values, values.size() / 10);
+        List<List<Double>> partition = Lists.partition(values, values.size() / tamanhoBean);
 
         double sum = 0;
 
@@ -155,7 +181,7 @@ public class PSI extends AbstractChangeDetector {
             for (int j = 0; j < partition.get(i).size(); j++) {
                 sum2 += partition.get(i).get(j);
             }
-            //System.out.println(sum2 + " / " + sum +  " = " + sum2 / sum);
+
             if (sum2 / sum == 0.0) {
                 percentages.add(0.0001);
             } else {
