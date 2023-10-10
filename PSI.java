@@ -31,17 +31,17 @@ public class PSI extends AbstractChangeDetector {
 
     public FloatOption warningLevelOption = new FloatOption(
             "warningLevel", 'w', "Warning Level.",
-            0.1, 0.0, 1.0);
+            0.2, 0.0, 1.0);
 
     public FloatOption outcontrolLevelOption = new FloatOption(
             "outcontrolLevel", 'o', "Outcontrol Level.",
-            0.2, 0.0, 1.0);
+            0.3, 0.0, 1.0);
 
     public IntOption tamanhoJanelaOption = new IntOption(
             "tamanhoJanela",
             't',
             "The minimum number of instances before permitting detecting change.",
-            100, 0, Integer.MAX_VALUE);
+            1000, 0, Integer.MAX_VALUE);
 
     public IntOption tamanhoBinOption = new IntOption(
             "tamanhoBin",
