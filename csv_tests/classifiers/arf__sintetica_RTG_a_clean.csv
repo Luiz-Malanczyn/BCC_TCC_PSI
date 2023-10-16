@@ -1,0 +1,14 @@
+learning evaluation instances,evaluation time (cpu seconds),model cost (RAM-Hours),classified instances,classifications correct (percent),Kappa Statistic (percent),Kappa Temporal Statistic (percent),Kappa M Statistic (percent),model training instances,model serialized size (bytes),Change detected,Warning detected,[avg] model training instances,[err] model training instances,[avg] model serialized size (bytes),[err] model serialized size (bytes),[avg] tree size (nodes),[err] tree size (nodes),[avg] tree size (leaves),[err] tree size (leaves),[avg] active learning leaves,[err] active learning leaves,[avg] tree depth,[err] tree depth,[avg] active leaf byte size estimate,[err] active leaf byte size estimate,[avg] inactive leaf byte size estimate,[err] inactive leaf byte size estimate,[avg] byte size estimate overhead,[err] byte size estimate overhead
+
+500000.0,5.5625,1.5336873992863627E-6,500000.0,87.4386,74.86002489272266,74.40012064840364,74.20540558300375,124577.0,1031216.0,10.0,0.0,325.0,247.0,247.0,7.0,0.0,0.0,1.0,1.0
+
+500000.0,5.125,1.3825659536653096E-6,500000.0,87.3746,74.7315322226428,74.26968994175454,74.0739828082583,124799.0,1009760.0,3.0,0.0,319.0,242.0,242.0,7.0,0.0,0.0,1.0,1.0
+
+500000.0,5.578125,1.5414011431857943E-6,500000.0,87.2838,74.55082797685549,74.0846413766961,73.88752674658814,124551.0,1031184.0,3.0,50.0,325.0,247.0,247.0,7.0,0.0,0.0,1.0,1.0
+
+500000.0,5.25,1.4769053086638451E-6,500000.0,85.1542,70.28930170929053,69.74455961294687,69.51443391693259,112372.0,1050800.0,13.0,61.0,334.0,254.0,254.0,8.0,0.0,0.0,1.0,1.0
+
+500000.0,5.296875,1.4355866975771884E-6,500000.0,86.86580000000001,73.71145199497174,73.2327658238941,73.02917174903179,123042.0,1014272.0,3.0,0.0,319.0,243.0,243.0,9.0,0.0,0.0,1.0,1.0
+
+500000.0,5.203125,5.51666016690433E-8,500000.0,58.6126,17.09057390516569,15.653315181726658,15.011766445301442,171.0,4504.0,2475.0,1286.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,1.0
+
